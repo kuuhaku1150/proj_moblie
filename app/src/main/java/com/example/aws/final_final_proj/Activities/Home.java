@@ -14,15 +14,19 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.aws.final_final_proj.Adapters.PostAdapter;
 import com.example.aws.final_final_proj.Models.Post;
 import com.example.aws.final_final_proj.R;
 import com.example.aws.final_final_proj.ui.home.HomeFragment;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,8 +34,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -49,26 +57,31 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView text;
-
-
+    DatabaseReference databaseReference;
+    private PostAdapter adapter;
     private AppBarConfiguration mAppBarConfiguration;
-
+    private List<Post> exampleList=new ArrayList<>();
     private static final int PReqCode = 2 ;
     private static final int REQUESCODE = 2 ;
     FirebaseAuth mAuth;
     FirebaseUser currentUser ;
     Dialog popAddPost ;
+    Button btnSearch;
+    EditText edt_Search;
     ImageView popupUserImage,popupPostImage,popupAddBtn;
     TextView popupTitle,popupDescription,popupMap;
     ProgressBar popupClickProgress;
     private Uri pickedImgUri = null;
-
+    RecyclerView recview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +90,11 @@ public class Home extends AppCompatActivity  implements NavigationView.OnNavigat
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        edt_Search = findViewById(R.id.editText_search);
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
+        recview=(RecyclerView)findViewById(R.id.postRV);
 
         iniPopup();
         setupPopupImageClick();
@@ -121,9 +137,9 @@ public class Home extends AppCompatActivity  implements NavigationView.OnNavigat
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        getMenuInflater().inflate(R.menu.home,menu);
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

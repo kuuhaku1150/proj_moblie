@@ -15,19 +15,24 @@ import com.bumptech.glide.Glide;
 import com.example.aws.final_final_proj.Activities.PostDetailActivity;
 import com.example.aws.final_final_proj.Models.Post;
 import com.example.aws.final_final_proj.R;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 
 import java.util.List;
+import java.util.logging.Filter;
+import java.util.logging.LogRecord;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> {
 
     Context mContext;
     List<Post> mData ;
 
-
     public PostAdapter(Context mContext, List<Post> mData) {
         this.mContext = mContext;
         this.mData = mData;
+    }
+    public long getItemId(int position){
+        return position;
     }
 
     @NonNull
@@ -42,7 +47,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         holder.tvTitle.setText(mData.get(position).getTitle());
-        holder.txtMap.setText(mData.get(position).getMap());
+//        holder.txtMap.setText(mData.get(position).getMap());
         holder.txDetail.setText(mData.get(position).getDescription());
         Glide.with(mContext).load(mData.get(position).getPicture()).into(holder.imgPost);
         Glide.with(mContext).load(mData.get(position).getUserPhoto()).into(holder.imgPostProfile);
@@ -53,6 +58,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
     public int getItemCount() {
         return mData.size();
     }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -65,7 +71,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyViewHolder> 
 
             tvTitle = itemView.findViewById(R.id.row_post_title);
             txDetail = itemView.findViewById(R.id.row_post_detail);
-            txtMap = itemView.findViewById(R.id.map);
+//            txtMap = itemView.findViewById(R.id.map);
             imgPost = itemView.findViewById(R.id.row_post_img);
             imgPostProfile = itemView.findViewById(R.id.row_post_profile_img);
 
